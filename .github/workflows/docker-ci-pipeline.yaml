@@ -18,4 +18,4 @@ jobs:
           password: ${{ secrets.DOCKER_SECRET }}
 
       - name: push image
-        run: docker push ${{ vars.DOCKER_USERNAME }}/az-helloworld-demo-py:v1
+        run: docker push ${{ vars.DOCKER_USERNAME }}/az-helloworld1-demo-py:v1
