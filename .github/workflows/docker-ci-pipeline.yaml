@@ -13,7 +13,7 @@ jobs:
         run: sudo docker images
         
       - name: create container
-        run: docker run  --name pythonapp -itd -p 8080:8080 ${{ vars.DOCKER_USERNAME }}/az-helloworld-demo-py
+        run: docker run  --name pythonapp -itd -p 8080:8080 ${{ vars.DOCKER_USERNAME }}/az-helloworld-demo-py:v1
       -  name: sleep
          run: sleep 20
          
