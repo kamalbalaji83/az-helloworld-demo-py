@@ -50,7 +50,10 @@ jobs:
         run: kubectl get pods -A
       - name: apply-yaml-files
         run: |
-          kubectl apply -f k8s/.
+          #kubectl apply -f k8s/.
+          kubectl apply -f k8s/kamalnamespace.yaml
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/svc.yaml
           kubectl config set-context --current --namespace=hello-world-ns
           kubectl wait --for=condition=ready pod -l app=hello-world
       - name: get-status-deployment
