@@ -59,7 +59,9 @@ jobs:
       - name: get-status-deployment
         run: |
           kubectl get ns
-          kubectl get deploy, service -n hello-world-ns
+          kubectl get svc -n hello-world-ns
+          kubectl get pods -n hello-world-ns -o wide 
+          kubectl get pods --show-labels
       - name: Test service URLs
         run: |
           minikube service list
