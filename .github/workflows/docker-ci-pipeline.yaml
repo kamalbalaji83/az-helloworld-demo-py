@@ -39,7 +39,7 @@ jobs:
         run: docker rm -f pythonapp
   k8scd-job:
       runs-on: ubuntu-latest
-      needs: -dockerci-job
+      needs: dockerci-job
       steps:
         - name: Code Checkout
           uses: actions/checkout@v6
