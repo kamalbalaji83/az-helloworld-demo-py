@@ -51,15 +51,15 @@ jobs:
       - name: apply-yaml-files
         run: |
           kubectl apply -f k8s/.
-          kubectl config set-context --current --namespace=hello-world
+          kubectl config set-context --current --namespace=hello-world-ns
           kubectl wait --for=condition=ready pod -l app=hello-world
       - name: get-status-deployment
         run: |
           kubectl get ns
-          kubectl get deploy, service -n hello-world
+          kubectl get deploy, service -n hello-world-ns
       - name: Test service URLs
         run: |
           minikube service list
-          minikube service my-service -n hello-world --url
+          minikube service my-service -n hello-world-ns --url
           echo -n "------------------opening the service------------------"
-          curl $(minikube service my-service -n hello-orld --url)/version
+          curl $(minikube service my-service -n hello-world-ns --url)/version
