@@ -16,7 +16,7 @@ jobs:
     steps:
      - name: Code Checkout
       uses: actions/checkout@v6
-      - name: Build image
+     - name: Build image
         run: sudo docker build -t ${{ vars.DOCKER_USERNAME }}/az-helloworld-demo-py:v1 .
  
       - name: Verify Image
