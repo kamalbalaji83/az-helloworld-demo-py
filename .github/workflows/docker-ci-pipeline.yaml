@@ -14,8 +14,8 @@ jobs:
   dockerci-job:
     runs-on: ubuntu-24.04
     steps:
-      - name: Code Checkout
-        uses: actions/checkout@v6
+     - name: Code Checkout
+      uses: actions/checkout@v6
       - name: Build image
         run: sudo docker build -t ${{ vars.DOCKER_USERNAME }}/az-helloworld-demo-py:v1 .
  
@@ -43,41 +43,68 @@ jobs:
         run: docker push ${{ vars.DOCKER_USERNAME }}/az-helloworld-demo-py:v1
 
       - name: container cleanup
-        run: docker rm -f pythonapp
+        run: docker rm -f pythonapp  
 
-    k8scd-job:
-        runs-on: ubuntu-latest
-        needs: [dockerci-job]
-        
-        steps:  
-        
-        - name: Code Checkout
-          uses: actions/checkout@v6
-        
-        - name: start minikube
-          uses: medyagh/setup-minikube@latest
-        
-        - name: test-minikube
-          run: kubectl get pods -A
-        
-        - name: apply-yaml-files
-          run: |
-               kubectl apply -f k8s/.
-               kubectl config set-context --current --namespace=hello-world
-               kubectl wait --for=condition=ready pod -l app=hello-world
+k8scd-job:
 
-        - name: get-status-deployment
-         run: |  
-            kubectl get ns
-            kubectl get deploy, service -n hello-world
+    needs: dockerci-job
 
-        - name: Test service URLs
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Code Checkout
+
+        uses: actions/checkout@v6
+ 
+      - name: start minikube
+
+        uses: medyagh/setup-minikube@latest
+ 
+      - name: test-kube
+
+        run: kubectl get pods -A
+ 
+      - name: apply-yaml
+
         run: |
-          minikube service list
-          minikube service my-service --url
-          echo -n "------------------opening the service------------------"
-          curl $(minikube service my-service --url)/version
 
-        
-            
-            
+          kubectl apply -f k8s/namespace.yaml
+
+          kubectl apply -f k8s/deployment.yaml
+
+          kubectl apply -f k8s/py-np-service.yaml
+ 
+      - name: Wait
+
+        run: |
+
+          kubectl config set-context --current --namespace=pythonapp-ns
+
+          kubectl wait --for=condition=ready pod -l app=pythonapp
+
+#        run: sleep 30
+
+      - name: get status
+
+        run: |
+
+          kubectl get ns
+
+          kubectl get svc -n pythonapp-ns
+
+          kubectl get pods -n pythonapp-ns -o wide 
+
+          kubectl get pods --show-labels
+
+      - name: test the app
+
+        run: | 
+
+          minikube service list
+
+          minikube service py-np-service --url
+
+          echo -n "------------------opening the service------------------"
+
+          curl $(minikube service py-np-service --url)/version
